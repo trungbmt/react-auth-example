@@ -1,10 +1,23 @@
 import RegisterForm from "@modules/auth/components/RegisterForm";
-import { Card } from "antd";
+import useRegistration from "@modules/auth/hooks/mutate/useRegistration";
+import { Card, notification } from "antd";
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const RegisterPage = () => {
-  const handleRegister = (values) => {};
+  const { mutate: register, isLoading } = useRegistration();
+  const nav = useNavigate();
+  const handleRegister = (values) => {
+    register(values, {
+      onSuccess: () => {
+        notification.success({
+          message: "Register successful, please login!",
+          placement: "top",
+        });
+        nav("/auth/sign-in");
+      },
+    });
+  };
   return (
     <>
       <div className="flex h-[100vh] items-center justify-center">
@@ -16,9 +29,8 @@ const RegisterPage = () => {
                 <Link to={"/auth/sign-in"}>Sign In</Link>
               </p>
             }
-            onFinish={undefined}
-            isLoading={undefined} // isLoading={isLoading}
-            // onFinish={handlelogin}
+            isLoading={isLoading}
+            onFinish={handleRegister}
           />
         </Card>
       </div>
